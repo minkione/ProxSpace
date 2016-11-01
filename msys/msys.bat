@@ -94,7 +94,7 @@ exit
 
 :startsh
 if NOT EXIST %WD%sh.exe goto notfound
-start %WD%sh --login -i
+start %WD%sh --login -i -c "sh /script.sh"
 exit
 
 :EOF
