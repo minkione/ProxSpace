@@ -1,7 +1,7 @@
 #!/bin/bash 
 pm3Dir=/pm3
 buildDir=/build
-uploadDir=/build
+uploadDir=/upload
 qtDir=/qt
 mingwDir=/mingw
 
@@ -13,13 +13,15 @@ for i in $( ls ); do
 	git pull
 	hash=$(git rev-parse HEAD)
 	date=$(date +%Y%m%d)
-	if ! ls $uploadDir/*-$hash.zip 1> /dev/null 2>&1; then
+	if ! ls $uploadDir/$i/*-$hash.zip 1> /dev/null 2>&1; then
 		make clean
 		make all
 		mkdir -p $buildDir/$i/win32/lualibs
 		mkdir -p $buildDir/$i/win32/scripts
+		mkdir -p $buildDir/$i/win32/platforms
 		mkdir -p $buildDir/$i/firmware_win/bootrom
 		mkdir -p "$buildDir/$i/firmware_win/JTAG Only"
+		mkdir -p $uploadDir/$i
 		rm -rf $buildDir/$i/win32/lualibs/*
 		rm -rf $buildDir/$i/win32/scripts/*
 		cp $qtDir/bin/Qt5Core.dll $buildDir/$i/win32
@@ -29,6 +31,7 @@ for i in $( ls ); do
 		cp $mingwDir/bin/readline5.dll $buildDir/$i/win32
 		cp $qtDir/bin/libwinpthread-1.dll $buildDir/$i/win32
 		cp $qtDir/bin/libgcc_s_dw2-1.dll $buildDir/$i/win32
+		cp $qtDir/plugins/platforms/qwindows.dll $buildDir/$i/win32/platforms
 		cp -r $buildDir/common/* $buildDir/$i
 		cp $pm3Dir/$i/client/proxmark3.exe $buildDir/$i/win32
 		cp $pm3Dir/$i/client/flasher.exe $buildDir/$i/win32
@@ -42,6 +45,6 @@ for i in $( ls ); do
 		cp $pm3Dir/$i/recovery/fullimage.bin "$buildDir/$i/firmware_win/JTAG Only"
 		cp $pm3Dir/$i/recovery/proxmark3_recovery.bin "$buildDir/$i/firmware_win/JTAG Only"
 		cd $buildDir/$i
-		zip -r $uploadDir/$date-$hash.zip ./*
+		zip -r $uploadDir/$i/$date-$hash.zip ./*
 	fi
 done
